@@ -30,20 +30,22 @@ app.use((req, res, next) => {
 app.use(passport.initialize());
 app.use(passport.session());
 
-passport.use(new GoogleStrategy({
-  clientID:     process.env.GOOGLE_CLIENT_ID,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL:  (process.env.APP_URL || "http://localhost:3000") + "/auth/google/callback",
-  scope: ["profile", "email", "https://www.googleapis.com/auth/gmail.send"],
-}, (accessToken, refreshToken, profile, done) => {
-  // Ukládáme jen minimum dat — aby se vešlo do cookie
-  done(null, {
-    accessToken,
-    name:  profile.displayName,
-    email: profile.emails?.[0]?.value,
-    photo: profile.photos?.[0]?.value,
-  });
-}));
+if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+  console.warn("VAROVÁNÍ: GOOGLE_CLIENT_ID nebo GOOGLE_CLIENT_SECRET není nastaven!");
+} else {
+  passport.use(new GoogleStrategy({
+    clientID:     process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL:  (process.env.APP_URL || "http://localhost:3000") + "/auth/google/callback",
+  }, (accessToken, refreshToken, profile, done) => {
+    done(null, {
+      accessToken,
+      name:  profile.displayName,
+      email: profile.emails?.[0]?.value,
+      photo: profile.photos?.[0]?.value,
+    });
+  }));
+}
 
 // Serialize: uložíme jen to nejmenší co jde
 passport.serializeUser((user, done) => done(null, user));
