@@ -32,18 +32,26 @@ app.use(passport.session());
 
 const CALLBACK_URL = "https://web-agent-production-9053.up.railway.app/auth/google/callback";
 
-passport.use(new GoogleStrategy({
-  clientID:     process.env.GOOGLE_CLIENT_ID,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL:  CALLBACK_URL,
-}, (accessToken, refreshToken, profile, done) => {
-  done(null, {
-    accessToken,
-    name:  profile.displayName,
-    email: profile.emails?.[0]?.value,
-    photo: profile.photos?.[0]?.value,
-  });
-}));
+try {
+  passport.use(new GoogleStrategy({
+    clientID:     process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL:  CALLBACK_URL,
+  }, (accessToken, refreshToken, profile, done) => {
+    done(null, {
+      accessToken,
+      name:  profile.displayName,
+      email: profile.emails?.[0]?.value,
+      photo: profile.photos?.[0]?.value,
+    });
+  }));
+  console.log("✅ Google OAuth strategie načtena");
+} catch (e) {
+  console.error("❌ Chyba při načítání OAuth strategie:", e.message);
+}
+
+process.on("uncaughtException", (err) => console.error("Uncaught:", err));
+process.on("unhandledRejection", (err) => console.error("Unhandled:", err));
 
 // Serialize: uložíme jen to nejmenší co jde
 passport.serializeUser((user, done) => done(null, user));
