@@ -1,6 +1,6 @@
 require("dotenv").config({ path: require("path").join(__dirname, ".env"), override: true });
 const express = require("express");
-const session = require("express-session");
+const cookieSession = require("cookie-session");
 const passport = require("passport");
 const { Strategy: GoogleStrategy } = require("passport-google-oauth20");
 const { google } = require("googleapis");
@@ -12,12 +12,18 @@ app.use(compression());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public"), { maxAge: "1h", etag: true }));
 
-app.use(session({
-  secret: process.env.SESSION_SECRET || "webagent-secret-xyz",
-  resave: false,
-  saveUninitialized: false,
-  cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 },
+app.use(cookieSession({
+  name: "wa_session",
+  keys: [process.env.SESSION_SECRET || "webagent-secret-xyz"],
+  maxAge: 30 * 24 * 60 * 60 * 1000,
 }));
+
+// Passport potřebuje tyto metody z express-session
+app.use((req, res, next) => {
+  if (req.session && !req.session.regenerate) req.session.regenerate = (cb) => cb();
+  if (req.session && !req.session.save) req.session.save = (cb) => cb();
+  next();
+});
 
 app.use(passport.initialize());
 app.use(passport.session());
