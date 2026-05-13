@@ -1,4 +1,9 @@
 require("dotenv").config({ path: require("path").join(__dirname, ".env"), override: true });
+console.log("ENV CHECK:", {
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID ? process.env.GOOGLE_CLIENT_ID.slice(0,20)+"..." : "MISSING",
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET ? "SET" : "MISSING",
+  SESSION_SECRET: process.env.SESSION_SECRET ? "SET" : "MISSING",
+});
 const express = require("express");
 const cookieSession = require("cookie-session");
 const passport = require("passport");
