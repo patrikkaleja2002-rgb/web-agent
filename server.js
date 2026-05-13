@@ -1,5 +1,5 @@
 require("dotenv").config({ path: require("path").join(__dirname, ".env"), override: true });
-console.log("ENV CHECK:", {
+console.log("ENV CHECK v2:", {
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID ? process.env.GOOGLE_CLIENT_ID.slice(0,20)+"..." : "MISSING",
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET ? "SET" : "MISSING",
   SESSION_SECRET: process.env.SESSION_SECRET ? "SET" : "MISSING",
