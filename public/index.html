@@ -225,26 +225,47 @@
     <p class="subtitle">Odešle klientovi e-mail s odkazem na hotový web.</p>
 
     <form id="sendForm">
+
+      <!-- Typ emailu -->
+      <label class="required">Typ e-mailu</label>
+      <div style="display:flex;gap:10px;margin-bottom:18px">
+        <label id="tab-done" onclick="setType('done')" style="flex:1;cursor:pointer;padding:12px;border-radius:10px;border:1.5px solid rgba(26,86,232,0.8);background:rgba(26,86,232,0.18);text-align:center;transition:all 0.2s">
+          <div style="font-size:20px;margin-bottom:4px">🚀</div>
+          <div style="color:#fff;font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em">Hotový projekt</div>
+        </label>
+        <label id="tab-demo" onclick="setType('demo')" style="flex:1;cursor:pointer;padding:12px;border-radius:10px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);text-align:center;transition:all 0.2s">
+          <div style="font-size:20px;margin-bottom:4px">👀</div>
+          <div style="color:rgba(200,225,255,0.7);font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em">Demo / Ukázka</div>
+        </label>
+      </div>
+      <input type="hidden" id="emailType" value="done" />
+
+      <!-- Odesílatel -->
       <label class="required" for="senderName">Tvoje jméno</label>
       <input type="text" id="senderName" placeholder="Patrik" required />
 
-      <label class="required" for="senderEmail">Tvůj e-mail (pro odpovědi)</label>
+      <label class="required" for="senderEmail">Tvůj Gmail</label>
       <input type="email" id="senderEmail" placeholder="tvuj.email@gmail.com" required />
 
+      <label class="required" for="appPassword">Gmail App Password</label>
+      <input type="password" id="appPassword" placeholder="xxxx xxxx xxxx xxxx" required />
+
+      <!-- Klient -->
       <label class="required" for="clientName">Jméno klienta</label>
       <input type="text" id="clientName" placeholder="Jan Novák" required />
 
       <label class="required" for="clientEmail">E-mail klienta</label>
       <input type="email" id="clientEmail" placeholder="klient@example.com" required />
 
+      <!-- Projekt -->
       <label class="required" for="projectName">Název projektu / webu</label>
       <input type="text" id="projectName" placeholder="Kavárna U Nováků" required />
 
-      <label class="required" for="websiteUrl">URL hotového webu</label>
+      <label class="required" for="websiteUrl">URL webu</label>
       <input type="url" id="websiteUrl" placeholder="https://novakuv-web.cz" required />
 
-      <label class="required" for="message">Text e-mailu</label>
-      <textarea id="message" placeholder="Dobrý den, Váš web je hotový…" style="min-height:140px" required></textarea>
+      <label for="note">Poznámka pro klienta (nepovinné)</label>
+      <textarea id="note" placeholder="Přidá se do emailu jako zvýrazněná poznámka…" style="min-height:72px"></textarea>
 
       <button type="submit" id="sendBtn">Odeslat e-mail</button>
     </form>
@@ -257,6 +278,27 @@
     const btn  = document.getElementById("sendBtn");
     const statusEl = document.getElementById("status");
 
+    function setType(t) {
+      document.getElementById("emailType").value = t;
+      const done = document.getElementById("tab-done");
+      const demo = document.getElementById("tab-demo");
+      if (t === "done") {
+        done.style.border = "1.5px solid rgba(26,86,232,0.8)";
+        done.style.background = "rgba(26,86,232,0.18)";
+        done.querySelector("div:last-child").style.color = "#fff";
+        demo.style.border = "1.5px solid rgba(255,255,255,0.1)";
+        demo.style.background = "rgba(255,255,255,0.04)";
+        demo.querySelector("div:last-child").style.color = "rgba(200,225,255,0.7)";
+      } else {
+        demo.style.border = "1.5px solid rgba(124,58,237,0.8)";
+        demo.style.background = "rgba(124,58,237,0.18)";
+        demo.querySelector("div:last-child").style.color = "#fff";
+        done.style.border = "1.5px solid rgba(255,255,255,0.1)";
+        done.style.background = "rgba(255,255,255,0.04)";
+        done.querySelector("div:last-child").style.color = "rgba(200,225,255,0.7)";
+      }
+    }
+
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       btn.disabled = true;
@@ -264,13 +306,15 @@
       statusEl.style.display = "none";
 
       const payload = {
+        type:        document.getElementById("emailType").value,
         senderName:  document.getElementById("senderName").value.trim(),
         senderEmail: document.getElementById("senderEmail").value.trim(),
+        appPassword: document.getElementById("appPassword").value.trim(),
         clientName:  document.getElementById("clientName").value.trim(),
         clientEmail: document.getElementById("clientEmail").value.trim(),
         projectName: document.getElementById("projectName").value.trim(),
         websiteUrl:  document.getElementById("websiteUrl").value.trim(),
-        message:     document.getElementById("message").value.trim(),
+        note:        document.getElementById("note").value.trim(),
       };
 
       try {

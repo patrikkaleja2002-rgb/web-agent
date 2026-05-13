@@ -4,27 +4,53 @@ const nodemailer = require("nodemailer");
 const path = require("path");
 
 const app = express();
-
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASSWORD,
-  },
-});
+function buildEmail(type, senderName, clientName, projectName, websiteUrl, note) {
+  const isDemo = type === "demo";
 
-function buildHtmlEmail(senderName, clientName, projectName, websiteUrl, message) {
-  const messageHtml = message
-    .split("\n")
-    .map(l => l.trim() ? `<p style="margin:0 0 12px 0;color:#374151;font-size:16px;line-height:1.6">${l}</p>` : "<br>")
-    .join("");
+  const banner = isDemo
+    ? { emoji: "👀", title: "Ukázka vašeho webu", subtitle: `První náhled — ${projectName}`, bg: "linear-gradient(135deg,#0f766e 0%,#7c3aed 100%)" }
+    : { emoji: "🚀", title: "Váš web je živý!",   subtitle: projectName,                    bg: "linear-gradient(135deg,#1a56e8 0%,#7c3aed 50%,#e63946 100%)" };
 
-  return `<!DOCTYPE html>
+  const bodyText = isDemo
+    ? `připravili jsme pro vás první ukázku webu <strong>${projectName}</strong>. Jde o demo verzi, která slouží k odsouhlasení designu a rozvržení stránky před finálním spuštěním.`
+    : `váš web <strong>${projectName}</strong> je hotový, otestovaný a připravený k plnému používání. Nyní je dostupný online pro všechny návštěvníky.`;
+
+  const cta = isDemo ? "👁 &nbsp;Zobrazit ukázku" : "🌐 &nbsp;Otevřít web";
+
+  const boxes = isDemo
+    ? `<td width="48%" style="background:#f0fdfa;border:1px solid #99f6e4;border-radius:10px;padding:16px;text-align:center">
+        <div style="font-size:24px;margin-bottom:6px">💬</div>
+        <p style="margin:0;color:#134e4a;font-size:13px;font-weight:600">Zpětná vazba</p>
+        <p style="margin:4px 0 0;color:#6b7280;font-size:12px">Pošlete nám připomínky</p>
+      </td>
+      <td width="4%"></td>
+      <td width="48%" style="background:#faf5ff;border:1px solid #e9d5ff;border-radius:10px;padding:16px;text-align:center">
+        <div style="font-size:24px;margin-bottom:6px">🎨</div>
+        <p style="margin:0;color:#6b21a8;font-size:13px;font-weight:600">Návrh designu</p>
+        <p style="margin:4px 0 0;color:#6b7280;font-size:12px">Úvodní verze k odsouhlasení</p>
+      </td>`
+    : `<td width="48%" style="background:#f8faff;border:1px solid #e0e7ff;border-radius:10px;padding:16px;text-align:center">
+        <div style="font-size:24px;margin-bottom:6px">✅</div>
+        <p style="margin:0;color:#3730a3;font-size:13px;font-weight:600">Otestováno</p>
+        <p style="margin:4px 0 0;color:#6b7280;font-size:12px">Web funguje správně</p>
+      </td>
+      <td width="4%"></td>
+      <td width="48%" style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:16px;text-align:center">
+        <div style="font-size:24px;margin-bottom:6px">📱</div>
+        <p style="margin:0;color:#166534;font-size:13px;font-weight:600">Mobilní verze</p>
+        <p style="margin:4px 0 0;color:#6b7280;font-size:12px">Funguje na všech zařízeních</p>
+      </td>`;
+
+  const noteSection = note
+    ? `<div style="margin-top:20px;padding:16px;background:#fffbeb;border-left:4px solid #f59e0b;border-radius:0 8px 8px 0">
+        <p style="margin:0;color:#92400e;font-size:14px"><strong>📝 Poznámka:</strong> ${note}</p>
+      </div>`
+    : "";
+
+  const html = `<!DOCTYPE html>
 <html lang="cs">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:0;background:#f3f4f6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
@@ -32,55 +58,36 @@ function buildHtmlEmail(senderName, clientName, projectName, websiteUrl, message
   <tr><td align="center">
     <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%">
 
-      <!-- BANNER -->
-      <tr><td style="background:linear-gradient(135deg,#1a56e8 0%,#7c3aed 50%,#e63946 100%);border-radius:16px 16px 0 0;padding:48px 40px;text-align:center">
-        <div style="font-size:48px;margin-bottom:12px">🚀</div>
-        <h1 style="margin:0;color:#ffffff;font-size:28px;font-weight:800;letter-spacing:-0.5px">Váš web je živý!</h1>
-        <p style="margin:8px 0 0;color:rgba(255,255,255,0.8);font-size:16px">${projectName}</p>
+      <tr><td style="background:${banner.bg};border-radius:16px 16px 0 0;padding:48px 40px;text-align:center">
+        <div style="font-size:52px;margin-bottom:12px">${banner.emoji}</div>
+        <h1 style="margin:0;color:#ffffff;font-size:28px;font-weight:800;letter-spacing:-0.5px">${banner.title}</h1>
+        <p style="margin:10px 0 0;color:rgba(255,255,255,0.85);font-size:16px">${banner.subtitle}</p>
       </td></tr>
 
-      <!-- BODY -->
       <tr><td style="background:#ffffff;padding:40px">
+        <p style="margin:0 0 20px;color:#111827;font-size:18px;font-weight:700">Dobrý den, ${clientName} 👋</p>
+        <p style="margin:0 0 16px;color:#374151;font-size:16px;line-height:1.7">
+          S pozdravem vás informuji, že ${bodyText}
+        </p>
+        ${noteSection}
 
-        <p style="margin:0 0 24px;color:#111827;font-size:18px;font-weight:700">Dobrý den, ${clientName} 👋</p>
-
-        <div style="margin-bottom:32px">
-          ${messageHtml}
-        </div>
-
-        <!-- Tlačítko -->
-        <table cellpadding="0" cellspacing="0" style="margin:0 auto 36px">
-          <tr><td align="center" style="background:linear-gradient(135deg,#1a56e8,#7c3aed);border-radius:10px">
+        <table cellpadding="0" cellspacing="0" style="margin:32px auto">
+          <tr><td align="center" style="background:${banner.bg};border-radius:10px">
             <a href="${websiteUrl}" target="_blank"
-               style="display:inline-block;padding:14px 36px;color:#ffffff;font-size:16px;font-weight:700;text-decoration:none;letter-spacing:0.3px">
-              🌐 &nbsp;Otevřít web
+               style="display:inline-block;padding:15px 40px;color:#ffffff;font-size:16px;font-weight:700;text-decoration:none">
+              ${cta}
             </a>
           </td></tr>
         </table>
 
-        <!-- Info boxy -->
         <table width="100%" cellpadding="0" cellspacing="0">
-          <tr>
-            <td width="48%" style="background:#f8faff;border:1px solid #e0e7ff;border-radius:10px;padding:16px;text-align:center">
-              <div style="font-size:24px;margin-bottom:6px">✅</div>
-              <p style="margin:0;color:#3730a3;font-size:13px;font-weight:600">Otestováno</p>
-              <p style="margin:4px 0 0;color:#6b7280;font-size:12px">Web funguje správně</p>
-            </td>
-            <td width="4%"></td>
-            <td width="48%" style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:16px;text-align:center">
-              <div style="font-size:24px;margin-bottom:6px">📱</div>
-              <p style="margin:0;color:#166534;font-size:13px;font-weight:600">Mobilní verze</p>
-              <p style="margin:4px 0 0;color:#6b7280;font-size:12px">Funguje na všech zařízeních</p>
-            </td>
-          </tr>
+          <tr>${boxes}</tr>
         </table>
-
       </td></tr>
 
-      <!-- FOOTER -->
       <tr><td style="background:#1e293b;border-radius:0 0 16px 16px;padding:28px 40px;text-align:center">
-        <p style="margin:0 0 8px;color:rgba(255,255,255,0.9);font-size:14px;font-weight:600">Odesílatel: ${senderName}</p>
-        <p style="margin:0;color:rgba(255,255,255,0.45);font-size:12px">Tento e-mail byl odeslán automaticky. V případě dotazů odpovězte na tento e-mail.</p>
+        <p style="margin:0 0 6px;color:rgba(255,255,255,0.9);font-size:14px;font-weight:600">Odesílatel: ${senderName}</p>
+        <p style="margin:0;color:rgba(255,255,255,0.4);font-size:12px">V případě dotazů odpovězte na tento e-mail.</p>
       </td></tr>
 
     </table>
@@ -88,33 +95,44 @@ function buildHtmlEmail(senderName, clientName, projectName, websiteUrl, message
 </table>
 </body>
 </html>`;
+
+  const subject = isDemo
+    ? `👀 Ukázka vašeho webu „${projectName}" je připravena`
+    : `🚀 Váš web „${projectName}" je hotový!`;
+
+  return { html, subject };
 }
 
 app.post("/send", async (req, res) => {
-  const { senderName, senderEmail, clientName, clientEmail, projectName, websiteUrl, message } = req.body;
+  const { senderName, senderEmail, appPassword, clientName, clientEmail, projectName, websiteUrl, type, note } = req.body;
 
-  if (!senderName || !senderEmail || !clientName || !clientEmail || !projectName || !websiteUrl || !message) {
+  if (!senderName || !senderEmail || !appPassword || !clientName || !clientEmail || !projectName || !websiteUrl || !type) {
     return res.status(400).json({ error: "Vyplňte všechna povinná pole." });
   }
 
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    auth: { user: senderEmail, pass: appPassword },
+  });
+
+  const { html, subject } = buildEmail(type, senderName, clientName, projectName, websiteUrl, note);
+
   try {
     await transporter.sendMail({
-      from: `"${senderName} via Web Studio" <${process.env.GMAIL_USER}>`,
-      replyTo: `"${senderName}" <${senderEmail}>`,
+      from: `"${senderName}" <${senderEmail}>`,
       to: clientEmail,
-      subject: `🚀 Váš web „${projectName}" je hotový!`,
-      html: buildHtmlEmail(senderName, clientName, projectName, websiteUrl, message),
-      text: `${message}\n\nWeb: ${websiteUrl}`,
+      subject,
+      html,
+      text: `Dobrý den, ${clientName},\n\n${type === "demo" ? `připravili jsme ukázku webu ${projectName}` : `váš web ${projectName} je hotový`}.\n\n${websiteUrl}${note ? "\n\nPoznámka: " + note : ""}`,
     });
-
     res.json({ success: true, message: "E-mail byl úspěšně odeslán." });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Chyba při odesílání e-mailu: " + err.message });
+    res.status(500).json({ error: "Chyba při odesílání: " + err.message });
   }
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server běží na http://localhost:${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server běží na http://localhost:${PORT}`));
