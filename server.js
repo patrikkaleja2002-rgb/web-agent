@@ -1,11 +1,16 @@
 require("dotenv").config({ path: require("path").join(__dirname, ".env"), override: true });
 const express = require("express");
 const nodemailer = require("nodemailer");
+const compression = require("compression");
 const path = require("path");
 
 const app = express();
+app.use(compression());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public"), {
+  maxAge: "1h",
+  etag: true,
+}));
 
 function buildEmail(type, senderName, clientName, projectName, websiteUrl, note) {
   const isDemo = type === "demo";
