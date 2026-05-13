@@ -9,14 +9,15 @@ app.use(express.static(path.join(__dirname, "public")));
 
 function buildEmail(type, senderName, clientName, projectName, websiteUrl, note) {
   const isDemo = type === "demo";
+  const firstName = clientName.split(" ")[0];
 
   const banner = isDemo
     ? { emoji: "👀", title: "Ukázka vašeho webu", subtitle: `První náhled — ${projectName}`, bg: "linear-gradient(135deg,#0f766e 0%,#7c3aed 100%)" }
     : { emoji: "🚀", title: "Váš web je živý!",   subtitle: projectName,                    bg: "linear-gradient(135deg,#1a56e8 0%,#7c3aed 50%,#e63946 100%)" };
 
   const bodyText = isDemo
-    ? `připravili jsme pro vás první ukázku webu <strong>${projectName}</strong>. Jde o demo verzi, která slouží k odsouhlasení designu a rozvržení stránky před finálním spuštěním.`
-    : `váš web <strong>${projectName}</strong> je hotový, otestovaný a připravený k plnému používání. Nyní je dostupný online pro všechny návštěvníky.`;
+    ? `připravili jsme pro vás první ukázku webu <strong>${projectName}</strong>. Jde o úvodní verzi, která slouží k odsouhlasení designu a struktury stránky před finálním dokončením.<br><br>Prohlédněte si ji a dejte nám vědět, co byste rádi upravili nebo změnili — vaše zpětná vazba nám pomůže dotáhnout vše přesně podle vašich představ.`
+    : `těší nás, že vám můžeme oznámit, že váš web <strong>${projectName}</strong> je hotový a plně spuštěný. Stránka je otestována, funkční a připravena přijímat návštěvníky.<br><br>Pokud budete mít jakékoliv dotazy nebo požadavky na drobné úpravy, neváhejte nás kdykoliv kontaktovat.</p>`;
 
   const cta = isDemo ? "👁 &nbsp;Zobrazit ukázku" : "🌐 &nbsp;Otevřít web";
 
@@ -65,9 +66,9 @@ function buildEmail(type, senderName, clientName, projectName, websiteUrl, note)
       </td></tr>
 
       <tr><td style="background:#ffffff;padding:40px">
-        <p style="margin:0 0 20px;color:#111827;font-size:18px;font-weight:700">Dobrý den, ${clientName} 👋</p>
+        <p style="margin:0 0 20px;color:#111827;font-size:18px;font-weight:700">Dobrý den, ${firstName} 👋</p>
         <p style="margin:0 0 16px;color:#374151;font-size:16px;line-height:1.7">
-          S pozdravem vás informuji, že ${bodyText}
+          ${bodyText}
         </p>
         ${noteSection}
 

@@ -265,7 +265,7 @@
       <input type="url" id="websiteUrl" placeholder="https://novakuv-web.cz" required />
 
       <label for="note">Poznámka pro klienta (nepovinné)</label>
-      <textarea id="note" placeholder="Přidá se do emailu jako zvýrazněná poznámka…" style="min-height:72px"></textarea>
+      <input type="text" id="note" placeholder="Např. přihlašovací údaje do WordPressu…" />
 
       <button type="submit" id="sendBtn">Odeslat e-mail</button>
     </form>
@@ -315,6 +315,7 @@
         projectName: document.getElementById("projectName").value.trim(),
         websiteUrl:  document.getElementById("websiteUrl").value.trim(),
         note:        document.getElementById("note").value.trim(),
+
       };
 
       try {
