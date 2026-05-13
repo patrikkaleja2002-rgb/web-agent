@@ -16,9 +16,11 @@ app.use(cookieSession({
   name: "wa_session",
   keys: [process.env.SESSION_SECRET || "webagent-secret-xyz"],
   maxAge: 30 * 24 * 60 * 60 * 1000,
+  secure: false,
+  httpOnly: true,
 }));
 
-// Passport potřebuje tyto metody z express-session
+// Passport + cookie-session kompatibilita
 app.use((req, res, next) => {
   if (req.session && !req.session.regenerate) req.session.regenerate = (cb) => cb();
   if (req.session && !req.session.save) req.session.save = (cb) => cb();
@@ -31,12 +33,19 @@ app.use(passport.session());
 passport.use(new GoogleStrategy({
   clientID:     process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL:  process.env.APP_URL + "/auth/google/callback",
+  callbackURL:  (process.env.APP_URL || "http://localhost:3000") + "/auth/google/callback",
   scope: ["profile", "email", "https://www.googleapis.com/auth/gmail.send"],
 }, (accessToken, refreshToken, profile, done) => {
-  done(null, { accessToken, refreshToken, profile });
+  // Ukládáme jen minimum dat — aby se vešlo do cookie
+  done(null, {
+    accessToken,
+    name:  profile.displayName,
+    email: profile.emails?.[0]?.value,
+    photo: profile.photos?.[0]?.value,
+  });
 }));
 
+// Serialize: uložíme jen to nejmenší co jde
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
 
@@ -54,21 +63,17 @@ app.get("/auth/google/callback",
   (req, res) => res.redirect("/")
 );
 
-app.get("/auth/logout", (req, res) => {
-  req.logout(() => res.redirect("/"));
-});
-
 app.get("/auth/me", (req, res) => {
   if (!req.isAuthenticated()) return res.json({ loggedIn: false });
   res.json({
     loggedIn: true,
-    name:  req.user.profile.displayName,
-    email: req.user.profile.emails[0].value,
-    photo: req.user.profile.photos[0]?.value,
+    name:  req.user.name,
+    email: req.user.email,
+    photo: req.user.photo,
   });
 });
 
-// ── Send route ──
+// ── Email builder ──
 function buildHtmlEmail(type, senderName, clientName, projectName, websiteUrl, note) {
   const isDemo = type === "demo";
   const firstName = clientName.split(" ")[0];
@@ -145,6 +150,7 @@ function buildHtmlEmail(type, senderName, clientName, projectName, websiteUrl, n
   return { html, subject };
 }
 
+// ── Send route ──
 app.post("/send", async (req, res) => {
   if (!req.isAuthenticated()) return res.status(401).json({ error: "Nejsi přihlášen." });
 
@@ -153,21 +159,17 @@ app.post("/send", async (req, res) => {
     return res.status(400).json({ error: "Vyplňte všechna povinná pole." });
   }
 
-  const { accessToken, profile } = req.user;
-  const senderName  = profile.displayName;
-  const senderEmail = profile.emails[0].value;
-
   const auth = new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET
   );
-  auth.setCredentials({ access_token: accessToken });
+  auth.setCredentials({ access_token: req.user.accessToken });
 
   const gmail = google.gmail({ version: "v1", auth });
-  const { html, subject } = buildHtmlEmail(type, senderName, clientName, projectName, websiteUrl, note);
+  const { html, subject } = buildHtmlEmail(type, req.user.name, clientName, projectName, websiteUrl, note);
 
   const raw = [
-    `From: "${senderName}" <${senderEmail}>`,
+    `From: "${req.user.name}" <${req.user.email}>`,
     `To: ${clientEmail}`,
     `Subject: ${subject}`,
     "MIME-Version: 1.0",
@@ -176,17 +178,12 @@ app.post("/send", async (req, res) => {
     html,
   ].join("\r\n");
 
-  const encoded = Buffer.from(raw).toString("base64url");
-
   try {
-    await gmail.users.messages.send({ userId: "me", requestBody: { raw: encoded } });
+    await gmail.users.messages.send({ userId: "me", requestBody: { raw: Buffer.from(raw).toString("base64url") } });
     res.json({ success: true, message: "E-mail byl úspěšně odeslán." });
   } catch (err) {
     console.error(err);
-    const msg = err.code === 401
-      ? "Platnost přihlášení vypršela. Odhlaste se a přihlaste znovu."
-      : "Nepodařilo se odeslat e-mail. Zkuste to znovu.";
-    res.status(500).json({ error: msg });
+    res.status(500).json({ error: "Nepodařilo se odeslat e-mail. Zkus se odhlásit a přihlásit znovu." });
   }
 });
 
