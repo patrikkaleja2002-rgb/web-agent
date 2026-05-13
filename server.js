@@ -1,3 +1,4 @@
+require("dotenv").config({ path: require("path").join(__dirname, ".env"), override: true });
 const express = require("express");
 const nodemailer = require("nodemailer");
 const path = require("path");
@@ -7,7 +8,17 @@ const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
-function buildHtmlEmail(clientName, projectName, websiteUrl, message) {
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASSWORD,
+  },
+});
+
+function buildHtmlEmail(senderName, clientName, projectName, websiteUrl, message) {
   const messageHtml = message
     .split("\n")
     .map(l => l.trim() ? `<p style="margin:0 0 12px 0;color:#374151;font-size:16px;line-height:1.6">${l}</p>` : "<br>")
@@ -31,10 +42,8 @@ function buildHtmlEmail(clientName, projectName, websiteUrl, message) {
       <!-- BODY -->
       <tr><td style="background:#ffffff;padding:40px">
 
-        <!-- Pozdrav -->
         <p style="margin:0 0 24px;color:#111827;font-size:18px;font-weight:700">Dobrý den, ${clientName} 👋</p>
 
-        <!-- Zpráva -->
         <div style="margin-bottom:32px">
           ${messageHtml}
         </div>
@@ -70,7 +79,7 @@ function buildHtmlEmail(clientName, projectName, websiteUrl, message) {
 
       <!-- FOOTER -->
       <tr><td style="background:#1e293b;border-radius:0 0 16px 16px;padding:28px 40px;text-align:center">
-        <p style="margin:0 0 8px;color:rgba(255,255,255,0.9);font-size:14px;font-weight:600">Web Studio</p>
+        <p style="margin:0 0 8px;color:rgba(255,255,255,0.9);font-size:14px;font-weight:600">Odesílatel: ${senderName}</p>
         <p style="margin:0;color:rgba(255,255,255,0.45);font-size:12px">Tento e-mail byl odeslán automaticky. V případě dotazů odpovězte na tento e-mail.</p>
       </td></tr>
 
@@ -82,28 +91,19 @@ function buildHtmlEmail(clientName, projectName, websiteUrl, message) {
 }
 
 app.post("/send", async (req, res) => {
-  const { senderEmail, appPassword, clientName, clientEmail, projectName, websiteUrl, message } = req.body;
+  const { senderName, senderEmail, clientName, clientEmail, projectName, websiteUrl, message } = req.body;
 
-  if (!senderEmail || !appPassword || !clientName || !clientEmail || !projectName || !websiteUrl || !message) {
+  if (!senderName || !senderEmail || !clientName || !clientEmail || !projectName || !websiteUrl || !message) {
     return res.status(400).json({ error: "Vyplňte všechna povinná pole." });
   }
 
-  const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
-    auth: {
-      user: senderEmail,
-      pass: appPassword,
-    },
-  });
-
   try {
     await transporter.sendMail({
-      from: `"Web Studio" <${senderEmail}>`,
+      from: `"${senderName} via Web Studio" <${process.env.GMAIL_USER}>`,
+      replyTo: `"${senderName}" <${senderEmail}>`,
       to: clientEmail,
       subject: `🚀 Váš web „${projectName}" je hotový!`,
-      html: buildHtmlEmail(clientName, projectName, websiteUrl, message),
+      html: buildHtmlEmail(senderName, clientName, projectName, websiteUrl, message),
       text: `${message}\n\nWeb: ${websiteUrl}`,
     });
 

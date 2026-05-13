@@ -225,11 +225,11 @@
     <p class="subtitle">Odešle klientovi e-mail s odkazem na hotový web.</p>
 
     <form id="sendForm">
-      <label class="required" for="senderEmail">Tvůj Gmail</label>
-      <input type="email" id="senderEmail" placeholder="tvuj.email@gmail.com" required />
+      <label class="required" for="senderName">Tvoje jméno</label>
+      <input type="text" id="senderName" placeholder="Patrik" required />
 
-      <label class="required" for="appPassword">Gmail App Password</label>
-      <input type="password" id="appPassword" placeholder="xxxx xxxx xxxx xxxx" required />
+      <label class="required" for="senderEmail">Tvůj e-mail (pro odpovědi)</label>
+      <input type="email" id="senderEmail" placeholder="tvuj.email@gmail.com" required />
 
       <label class="required" for="clientName">Jméno klienta</label>
       <input type="text" id="clientName" placeholder="Jan Novák" required />
@@ -264,8 +264,8 @@
       statusEl.style.display = "none";
 
       const payload = {
+        senderName:  document.getElementById("senderName").value.trim(),
         senderEmail: document.getElementById("senderEmail").value.trim(),
-        appPassword: document.getElementById("appPassword").value.trim(),
         clientName:  document.getElementById("clientName").value.trim(),
         clientEmail: document.getElementById("clientEmail").value.trim(),
         projectName: document.getElementById("projectName").value.trim(),
