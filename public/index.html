@@ -18,225 +18,136 @@
       overflow-x: hidden;
     }
 
-    /* ── Animované pozadí ── */
-    .bg {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      overflow: hidden;
-    }
-    .orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(80px);
-      opacity: 0.35;
-      animation: drift 12s ease-in-out infinite alternate;
-    }
+    .bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.35; animation: drift 12s ease-in-out infinite alternate; }
     .orb1 { width: 600px; height: 600px; background: #1a4fd4; top: -200px; left: -150px; animation-delay: 0s; }
     .orb2 { width: 500px; height: 500px; background: #7c1ae8; top: 30%; right: -200px; animation-delay: -4s; }
     .orb3 { width: 400px; height: 400px; background: #c0001a; bottom: -150px; left: 20%; animation-delay: -8s; }
     @keyframes drift {
-      from { transform: translate(0, 0) scale(1); }
-      to   { transform: translate(40px, 30px) scale(1.08); }
+      from { transform: translate(0,0) scale(1); }
+      to   { transform: translate(40px,30px) scale(1.08); }
     }
 
-    /* ── Karta ── */
     .card {
-      position: relative;
-      z-index: 1;
-      background: rgba(8, 16, 40, 0.82);
+      position: relative; z-index: 1;
+      background: rgba(8,16,40,0.82);
       backdrop-filter: blur(32px);
-      -webkit-backdrop-filter: blur(32px);
       border: 1px solid rgba(255,255,255,0.1);
       border-radius: 24px;
-      box-shadow:
-        0 0 0 1px rgba(255,255,255,0.04) inset,
-        0 32px 80px rgba(0,0,0,0.7),
-        0 0 120px rgba(26,79,212,0.12);
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.04) inset, 0 32px 80px rgba(0,0,0,0.7);
       padding: 48px 44px;
-      width: 100%;
-      max-width: 520px;
+      width: 100%; max-width: 520px;
     }
 
-    /* ── Logo ── */
-    .logo-wrap { margin-bottom: 6px; }
     .logo-text {
-      font-size: 2.8rem;
-      font-weight: 900;
-      letter-spacing: -2px;
-      line-height: 1;
-      background: linear-gradient(100deg, #2979ff 0%, #60a5fa 22%, #ffffff 42%, #ffffff 54%, #ff4d5e 74%, #b91c1c 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      font-size: 2.8rem; font-weight: 900; letter-spacing: -2px; line-height: 1;
+      background: linear-gradient(100deg,#2979ff 0%,#60a5fa 22%,#ffffff 42%,#ffffff 54%,#ff4d5e 74%,#b91c1c 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
       animation: glow 3s ease-in-out infinite;
     }
     @keyframes glow {
       0%,100% { filter: drop-shadow(0 0 14px rgba(80,160,255,.7)) drop-shadow(0 0 30px rgba(255,77,94,.4)); }
       50%      { filter: drop-shadow(0 0 22px rgba(80,160,255,1))  drop-shadow(0 0 50px rgba(255,77,94,.65)); }
     }
-    .subtitle {
-      font-size: 0.88rem;
-      color: rgba(160,190,240,0.6);
-      margin-bottom: 36px;
-      letter-spacing: 0.01em;
-    }
 
-    /* ── Sekce ── */
-    .section {
-      margin-bottom: 28px;
-    }
-    .section-title {
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: rgba(120,160,255,0.5);
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .section-title::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: rgba(255,255,255,0.06);
-    }
+    .subtitle { font-size: 0.88rem; color: rgba(160,190,240,0.6); margin-bottom: 36px; }
 
-    /* ── Přepínač ── */
-    .type-switch {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 28px;
+    /* ── Login ── */
+    #login-view { text-align: center; }
+    #login-view .logo-text { display: block; margin-bottom: 8px; }
+    #login-view .subtitle  { margin-bottom: 48px; }
+    .google-btn {
+      display: inline-flex; align-items: center; gap: 12px;
+      padding: 14px 28px;
+      background: #fff; color: #1f1f1f;
+      border: none; border-radius: 12px;
+      font-size: 0.97rem; font-weight: 600; font-family: inherit;
+      cursor: pointer; text-decoration: none;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+      transition: transform 0.15s, box-shadow 0.15s;
     }
-    .type-btn {
-      cursor: pointer;
-      padding: 14px 10px;
+    .google-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+    .google-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+    /* ── App ── */
+    #app-view { display: none; }
+
+    .user-bar {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 32px;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
       border-radius: 12px;
-      border: 1.5px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.03);
-      text-align: center;
-      transition: all 0.22s;
-      user-select: none;
+    }
+    .user-bar img { width: 36px; height: 36px; border-radius: 50%; }
+    .user-bar .name { color: #fff; font-size: 0.9rem; font-weight: 600; flex: 1; }
+    .user-bar .email { color: rgba(160,190,240,0.6); font-size: 0.78rem; }
+    .logout-btn {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(200,220,255,0.7); border-radius: 8px;
+      padding: 6px 12px; font-size: 0.78rem; font-family: inherit;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .logout-btn:hover { background: rgba(255,77,94,0.15); border-color: rgba(255,77,94,0.3); color: #fca5a5; }
+
+    .section-title {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: rgba(120,160,255,0.5);
+      margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+    }
+    .section-title::after { content:''; flex:1; height:1px; background:rgba(255,255,255,0.06); }
+    .section { margin-bottom: 28px; }
+
+    .type-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 28px; }
+    .type-btn {
+      cursor: pointer; padding: 14px 10px; border-radius: 12px;
+      border: 1.5px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.03);
+      text-align: center; transition: all 0.22s; user-select: none;
     }
     .type-btn .icon { font-size: 22px; margin-bottom: 6px; }
     .type-btn .label {
-      font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: rgba(180,210,255,0.55);
-      transition: color 0.22s;
+      font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase; color: rgba(180,210,255,0.55); transition: color 0.22s;
     }
-    .type-btn.active-done {
-      border-color: rgba(26,86,232,0.9);
-      background: rgba(26,86,232,0.16);
-      box-shadow: 0 0 20px rgba(26,86,232,0.25);
-    }
+    .type-btn.active-done { border-color: rgba(26,86,232,0.9); background: rgba(26,86,232,0.16); box-shadow: 0 0 20px rgba(26,86,232,0.25); }
     .type-btn.active-done .label { color: #fff; }
-    .type-btn.active-demo {
-      border-color: rgba(124,58,237,0.9);
-      background: rgba(124,58,237,0.16);
-      box-shadow: 0 0 20px rgba(124,58,237,0.25);
-    }
+    .type-btn.active-demo { border-color: rgba(124,58,237,0.9); background: rgba(124,58,237,0.16); box-shadow: 0 0 20px rgba(124,58,237,0.25); }
     .type-btn.active-demo .label { color: #fff; }
 
-    /* ── Pole ── */
-    label {
-      display: block;
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: rgba(190,215,255,0.9);
-      margin-bottom: 7px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
-    .required::after { content: " *"; color: #ff4d5e; }
+    label { display: block; font-size: 0.78rem; font-weight: 700; color: rgba(190,215,255,0.9); margin-bottom: 7px; letter-spacing: 0.06em; text-transform: uppercase; }
+    .required::after { content:" *"; color:#ff4d5e; }
 
     input {
-      width: 100%;
-      padding: 13px 16px;
-      background: rgba(255,255,255,0.055);
-      border: 1.5px solid rgba(100,150,255,0.18);
-      border-radius: 11px;
-      font-size: 0.95rem;
-      font-family: inherit;
-      color: #fff;
-      outline: none;
-      margin-bottom: 16px;
-      transition: all 0.2s;
+      width: 100%; padding: 13px 16px;
+      background: rgba(255,255,255,0.055); border: 1.5px solid rgba(100,150,255,0.18);
+      border-radius: 11px; font-size: 0.95rem; font-family: inherit; color: #fff;
+      outline: none; margin-bottom: 16px; transition: all 0.2s;
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
     }
     input::placeholder { color: rgba(130,170,230,0.35); }
     input:hover { border-color: rgba(100,150,255,0.38); background: rgba(255,255,255,0.075); }
-    input:focus {
-      border-color: rgba(80,140,255,0.85);
-      background: rgba(20,50,140,0.22);
-      box-shadow: 0 0 0 3px rgba(70,120,255,0.18), 0 0 28px rgba(70,120,255,0.1);
-    }
+    input:focus { border-color: rgba(80,140,255,0.85); background: rgba(20,50,140,0.22); box-shadow: 0 0 0 3px rgba(70,120,255,0.18); }
 
-    .hint {
-      margin-top: -10px;
-      margin-bottom: 16px;
-      font-size: 0.75rem;
-      color: rgba(130,170,230,0.55);
-      line-height: 1.55;
-    }
-    .hint a { color: rgba(100,160,255,0.85); text-decoration: underline; }
-
-    /* ── Tlačítko ── */
-    button {
-      width: 100%;
-      padding: 15px;
-      background: linear-gradient(135deg, #1a56e8 0%, #7c1ae8 50%, #e63946 100%);
+    button[type=submit] {
+      width: 100%; padding: 15px;
+      background: linear-gradient(135deg,#1a56e8 0%,#7c1ae8 50%,#e63946 100%);
       background-size: 200% 200%;
-      color: #fff;
-      border: none;
-      border-radius: 12px;
-      font-size: 1rem;
-      font-weight: 800;
-      font-family: inherit;
-      letter-spacing: 0.04em;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
+      color: #fff; border: none; border-radius: 12px;
+      font-size: 1rem; font-weight: 800; font-family: inherit; letter-spacing: 0.04em;
+      cursor: pointer; position: relative; overflow: hidden;
       transition: transform 0.15s, box-shadow 0.2s;
-      box-shadow: 0 6px 28px rgba(26,86,232,0.45), 0 0 60px rgba(230,57,70,0.15);
-      animation: btn-shift 6s ease infinite;
-      margin-top: 8px;
+      box-shadow: 0 6px 28px rgba(26,86,232,0.45);
+      animation: btn-shift 6s ease infinite; margin-top: 8px;
     }
-    @keyframes btn-shift {
-      0%,100% { background-position: 0% 50%; }
-      50%      { background-position: 100% 50%; }
-    }
-    button::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, transparent 55%);
-      pointer-events: none;
-    }
-    button:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 40px rgba(26,86,232,0.6), 0 0 80px rgba(230,57,70,0.25);
-    }
-    button:active:not(:disabled) { transform: translateY(0); }
-    button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; animation: none; }
+    @keyframes btn-shift { 0%,100% { background-position:0% 50%; } 50% { background-position:100% 50%; } }
+    button[type=submit]::before { content:''; position:absolute; inset:0; border-radius:12px; background:linear-gradient(135deg,rgba(255,255,255,0.18) 0%,transparent 55%); pointer-events:none; }
+    button[type=submit]:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 12px 40px rgba(26,86,232,0.6); }
+    button[type=submit]:disabled { opacity:0.4; cursor:not-allowed; transform:none; box-shadow:none; animation:none; }
 
-    /* ── Status ── */
-    #status {
-      margin-top: 16px;
-      padding: 13px 18px;
-      border-radius: 12px;
-      font-size: 0.88rem;
-      display: none;
-      font-weight: 500;
-    }
-    #status.success { background: rgba(16,185,129,0.12); color: #6ee7b7; border: 1px solid rgba(110,231,183,0.22); }
-    #status.error   { background: rgba(230,57,70,0.1);   color: #fca5a5; border: 1px solid rgba(252,165,165,0.22); }
+    #status { margin-top:16px; padding:13px 18px; border-radius:12px; font-size:0.88rem; display:none; font-weight:500; }
+    #status.success { background:rgba(16,185,129,0.12); color:#6ee7b7; border:1px solid rgba(110,231,183,0.22); }
+    #status.error   { background:rgba(230,57,70,0.1);   color:#fca5a5; border:1px solid rgba(252,165,165,0.22); }
   </style>
 </head>
 <body>
@@ -247,101 +158,99 @@
   </div>
 
   <div class="card">
-    <div class="logo-wrap">
+
+    <!-- LOGIN -->
+    <div id="login-view">
       <span class="logo-text">Web Agent</span>
+      <p class="subtitle">Odešle klientovi profesionální e-mail s odkazem na web.</p>
+      <a class="google-btn" href="/auth/google">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Přihlásit se přes Google
+      </a>
     </div>
-    <p class="subtitle">Odešle klientovi profesionální e-mail s odkazem na web.</p>
 
-    <form id="sendForm">
+    <!-- APP -->
+    <div id="app-view">
 
-      <!-- Typ -->
-      <div class="section-title">Typ e-mailu</div>
-      <div class="type-switch">
-        <div id="tab-done" class="type-btn active-done" onclick="setType('done')">
-          <div class="icon">🚀</div>
-          <div class="label">Hotový projekt</div>
+      <div class="user-bar">
+        <img id="user-photo" src="" alt="" />
+        <div>
+          <div class="name" id="user-name"></div>
+          <div class="email" id="user-email"></div>
         </div>
-        <div id="tab-demo" class="type-btn" onclick="setType('demo')">
-          <div class="icon">👀</div>
-          <div class="label">Úvodní stránka</div>
+        <a href="/auth/logout" class="logout-btn">Odhlásit</a>
+      </div>
+
+      <form id="sendForm">
+        <div class="section-title">Typ e-mailu</div>
+        <div class="type-switch">
+          <div id="tab-done" class="type-btn active-done" onclick="setType('done')">
+            <div class="icon">🚀</div><div class="label">Hotový projekt</div>
+          </div>
+          <div id="tab-demo" class="type-btn" onclick="setType('demo')">
+            <div class="icon">👀</div><div class="label">Úvodní stránka</div>
+          </div>
         </div>
-      </div>
-      <input type="hidden" id="emailType" value="done" />
+        <input type="hidden" id="emailType" value="done" />
 
-      <!-- Odesílatel -->
-      <div class="section">
-        <div class="section-title">Odesílatel</div>
+        <div class="section">
+          <div class="section-title">Klient</div>
+          <label class="required" for="clientName">Jméno klienta</label>
+          <input type="text" id="clientName" placeholder="Jan Novák" required />
+          <label class="required" for="clientEmail">E-mail klienta</label>
+          <input type="email" id="clientEmail" placeholder="klient@example.com" required />
+        </div>
 
-        <label class="required" for="senderName">Tvoje jméno</label>
-        <input type="text" id="senderName" placeholder="Patrik" required />
+        <div class="section">
+          <div class="section-title">Projekt</div>
+          <label class="required" for="projectName">Název projektu / webu</label>
+          <input type="text" id="projectName" placeholder="Kavárna U Nováků" required />
+          <label class="required" for="websiteUrl">URL webu</label>
+          <input type="url" id="websiteUrl" placeholder="https://novakuv-web.cz" required />
+          <label for="note">Poznámka pro klienta (nepovinné)</label>
+          <input type="text" id="note" placeholder="Např. přihlašovací údaje do WordPressu…" />
+        </div>
 
-        <label class="required" for="senderEmail">Tvůj Gmail</label>
-        <input type="email" id="senderEmail" placeholder="tvuj.email@gmail.com" required />
+        <button type="submit" id="sendBtn">✉️ &nbsp;Odeslat e-mail</button>
+      </form>
+      <div id="status"></div>
+    </div>
 
-        <label class="required" for="appPassword">Gmail App Password</label>
-        <input type="password" id="appPassword" placeholder="xxxx xxxx xxxx xxxx" required />
-        <p class="hint">
-          Není to tvoje normální heslo. &nbsp;
-          <a href="https://myaccount.google.com/apppasswords" target="_blank">Vygeneruj App Password zde</a>
-          &nbsp;— potřebuješ mít zapnuté dvoufázové ověření.
-        </p>
-      </div>
-
-      <!-- Klient -->
-      <div class="section">
-        <div class="section-title">Klient</div>
-
-        <label class="required" for="clientName">Jméno klienta</label>
-        <input type="text" id="clientName" placeholder="Jan Novák" required />
-
-        <label class="required" for="clientEmail">E-mail klienta</label>
-        <input type="email" id="clientEmail" placeholder="klient@example.com" required />
-      </div>
-
-      <!-- Projekt -->
-      <div class="section">
-        <div class="section-title">Projekt</div>
-
-        <label class="required" for="projectName">Název projektu / webu</label>
-        <input type="text" id="projectName" placeholder="Kavárna U Nováků" required />
-
-        <label class="required" for="websiteUrl">URL webu</label>
-        <input type="url" id="websiteUrl" placeholder="https://novakuv-web.cz" required />
-
-        <label for="note">Poznámka pro klienta (nepovinné)</label>
-        <input type="text" id="note" placeholder="Např. přihlašovací údaje do WordPressu…" />
-      </div>
-
-      <button type="submit" id="sendBtn">✉️ &nbsp;Odeslat e-mail</button>
-    </form>
-
-    <div id="status"></div>
   </div>
 
   <script>
-    const form = document.getElementById("sendForm");
-    const btn  = document.getElementById("sendBtn");
-    const statusEl = document.getElementById("status");
+    // Zjisti jestli je přihlášen
+    fetch("/auth/me").then(r => r.json()).then(u => {
+      if (u.loggedIn) {
+        document.getElementById("login-view").style.display = "none";
+        document.getElementById("app-view").style.display = "block";
+        document.getElementById("user-name").textContent  = u.name;
+        document.getElementById("user-email").textContent = u.email;
+        document.getElementById("user-photo").src = u.photo || "";
+      }
+    });
 
     function setType(t) {
       document.getElementById("emailType").value = t;
-      const done = document.getElementById("tab-done");
-      const demo = document.getElementById("tab-demo");
-      done.className = "type-btn" + (t === "done" ? " active-done" : "");
-      demo.className = "type-btn" + (t === "demo" ? " active-demo" : "");
+      document.getElementById("tab-done").className = "type-btn" + (t === "done" ? " active-done" : "");
+      document.getElementById("tab-demo").className = "type-btn" + (t === "demo" ? " active-demo" : "");
     }
 
-    form.addEventListener("submit", async (e) => {
+    document.getElementById("sendForm").addEventListener("submit", async (e) => {
       e.preventDefault();
+      const btn = document.getElementById("sendBtn");
+      const statusEl = document.getElementById("status");
       btn.disabled = true;
       btn.textContent = "Odesílám…";
       statusEl.style.display = "none";
 
       const payload = {
         type:        document.getElementById("emailType").value,
-        senderName:  document.getElementById("senderName").value.trim(),
-        senderEmail: document.getElementById("senderEmail").value.trim(),
-        appPassword: document.getElementById("appPassword").value.trim(),
         clientName:  document.getElementById("clientName").value.trim(),
         clientEmail: document.getElementById("clientEmail").value.trim(),
         projectName: document.getElementById("projectName").value.trim(),
@@ -352,7 +261,6 @@
       try {
         const controller = new AbortController();
         const timer = setTimeout(() => controller.abort(), 15000);
-
         const res  = await fetch("/send", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -364,7 +272,7 @@
         if (res.ok) {
           statusEl.className = "success";
           statusEl.textContent = "✅ " + data.message;
-          form.reset();
+          e.target.reset();
           setType("done");
         } else {
           statusEl.className = "error";
@@ -373,7 +281,7 @@
       } catch (err) {
         statusEl.className = "error";
         statusEl.textContent = err.name === "AbortError"
-          ? "❌ Vypršel čas. Zkontroluj Gmail App Password a zkus znovu."
+          ? "❌ Vypršel čas. Zkus to znovu."
           : "❌ Nepodařilo se spojit se serverem.";
       } finally {
         statusEl.style.display = "block";
