@@ -3,276 +3,318 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Web Agent – Odeslání webu klientovi</title>
+  <title>Web Agent</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #0a1628;
+      font-family: 'Inter', sans-serif;
+      background: #060d1f;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 24px;
-      background-image:
-        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(30, 80, 200, 0.45) 0%, transparent 70%),
-        radial-gradient(ellipse 50% 40% at 80% 110%, rgba(180, 20, 30, 0.2) 0%, transparent 60%);
+      padding: 32px 16px;
+      overflow-x: hidden;
     }
 
+    /* ── Animované pozadí ── */
+    .bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.35;
+      animation: drift 12s ease-in-out infinite alternate;
+    }
+    .orb1 { width: 600px; height: 600px; background: #1a4fd4; top: -200px; left: -150px; animation-delay: 0s; }
+    .orb2 { width: 500px; height: 500px; background: #7c1ae8; top: 30%; right: -200px; animation-delay: -4s; }
+    .orb3 { width: 400px; height: 400px; background: #c0001a; bottom: -150px; left: 20%; animation-delay: -8s; }
+    @keyframes drift {
+      from { transform: translate(0, 0) scale(1); }
+      to   { transform: translate(40px, 30px) scale(1.08); }
+    }
+
+    /* ── Karta ── */
     .card {
-      background: rgba(15, 25, 55, 0.75);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 20px;
+      position: relative;
+      z-index: 1;
+      background: rgba(8, 16, 40, 0.82);
+      backdrop-filter: blur(32px);
+      -webkit-backdrop-filter: blur(32px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
       box-shadow:
-        0 8px 48px rgba(0,0,0,0.5),
-        0 0 0 1px rgba(255,255,255,0.04) inset;
-      padding: 44px 40px;
+        0 0 0 1px rgba(255,255,255,0.04) inset,
+        0 32px 80px rgba(0,0,0,0.7),
+        0 0 120px rgba(26,79,212,0.12);
+      padding: 48px 44px;
       width: 100%;
-      max-width: 500px;
+      max-width: 520px;
     }
 
-    /* ── Nadpis v barvách české vlajky ── */
-    .logo {
-      display: flex;
-      align-items: baseline;
-      gap: 0;
-      margin-bottom: 8px;
-    }
-
+    /* ── Logo ── */
+    .logo-wrap { margin-bottom: 6px; }
     .logo-text {
-      font-size: 2.2rem;
-      font-weight: 800;
-      letter-spacing: -1px;
-      background: linear-gradient(100deg,
-        #1a6fd4 0%,
-        #4fa3ff 18%,
-        #ffffff 38%,
-        #ffffff 52%,
-        #ff4d5e 70%,
-        #c0001a 100%
-      );
+      font-size: 2.8rem;
+      font-weight: 900;
+      letter-spacing: -2px;
+      line-height: 1;
+      background: linear-gradient(100deg, #2979ff 0%, #60a5fa 22%, #ffffff 42%, #ffffff 54%, #ff4d5e 74%, #b91c1c 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      filter:
-        drop-shadow(0 0 12px rgba(80, 160, 255, 0.7))
-        drop-shadow(0 0 28px rgba(255, 77, 94, 0.45))
-        drop-shadow(0 0 6px rgba(255,255,255,0.3));
-      animation: pulse-glow 3s ease-in-out infinite;
+      animation: glow 3s ease-in-out infinite;
     }
-
-    @keyframes pulse-glow {
-      0%, 100% {
-        filter:
-          drop-shadow(0 0 10px rgba(80, 160, 255, 0.65))
-          drop-shadow(0 0 24px rgba(255, 77, 94, 0.4))
-          drop-shadow(0 0 5px rgba(255,255,255,0.25));
-      }
-      50% {
-        filter:
-          drop-shadow(0 0 18px rgba(80, 160, 255, 0.9))
-          drop-shadow(0 0 40px rgba(255, 77, 94, 0.6))
-          drop-shadow(0 0 12px rgba(255,255,255,0.5));
-      }
+    @keyframes glow {
+      0%,100% { filter: drop-shadow(0 0 14px rgba(80,160,255,.7)) drop-shadow(0 0 30px rgba(255,77,94,.4)); }
+      50%      { filter: drop-shadow(0 0 22px rgba(80,160,255,1))  drop-shadow(0 0 50px rgba(255,77,94,.65)); }
     }
-
     .subtitle {
       font-size: 0.88rem;
-      color: rgba(180, 200, 240, 0.65);
-      margin-bottom: 32px;
+      color: rgba(160,190,240,0.6);
+      margin-bottom: 36px;
       letter-spacing: 0.01em;
     }
 
-    /* ── Oddělovač sekce ── */
-    .section-divider {
-      border: none;
-      border-top: 1px solid rgba(255,255,255,0.07);
-      margin: 6px 0 22px;
+    /* ── Sekce ── */
+    .section {
+      margin-bottom: 28px;
     }
-
-    .section-label {
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 0.1em;
+    .section-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: rgba(150,180,240,0.5);
-      margin-bottom: 14px;
+      color: rgba(120,160,255,0.5);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.06);
     }
 
+    /* ── Přepínač ── */
+    .type-switch {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+    .type-btn {
+      cursor: pointer;
+      padding: 14px 10px;
+      border-radius: 12px;
+      border: 1.5px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      text-align: center;
+      transition: all 0.22s;
+      user-select: none;
+    }
+    .type-btn .icon { font-size: 22px; margin-bottom: 6px; }
+    .type-btn .label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(180,210,255,0.55);
+      transition: color 0.22s;
+    }
+    .type-btn.active-done {
+      border-color: rgba(26,86,232,0.9);
+      background: rgba(26,86,232,0.16);
+      box-shadow: 0 0 20px rgba(26,86,232,0.25);
+    }
+    .type-btn.active-done .label { color: #fff; }
+    .type-btn.active-demo {
+      border-color: rgba(124,58,237,0.9);
+      background: rgba(124,58,237,0.16);
+      box-shadow: 0 0 20px rgba(124,58,237,0.25);
+    }
+    .type-btn.active-demo .label { color: #fff; }
+
+    /* ── Pole ── */
     label {
       display: block;
-      font-size: 0.83rem;
+      font-size: 0.78rem;
       font-weight: 700;
-      color: rgba(200, 225, 255, 0.95);
+      color: rgba(190,215,255,0.9);
       margin-bottom: 7px;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
     }
+    .required::after { content: " *"; color: #ff4d5e; }
 
-    .required::after {
-      content: " *";
-      color: #ff4d5e;
-    }
-
-    input, textarea {
+    input {
       width: 100%;
-      padding: 13px 18px;
-      background: rgba(255,255,255,0.07);
-      border: 1.5px solid rgba(120, 170, 255, 0.25);
-      border-radius: 10px;
-      font-size: 0.97rem;
+      padding: 13px 16px;
+      background: rgba(255,255,255,0.055);
+      border: 1.5px solid rgba(100,150,255,0.18);
+      border-radius: 11px;
+      font-size: 0.95rem;
       font-family: inherit;
-      color: #ffffff;
-      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+      color: #fff;
       outline: none;
-      margin-bottom: 18px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.06);
+      margin-bottom: 16px;
+      transition: all 0.2s;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+    input::placeholder { color: rgba(130,170,230,0.35); }
+    input:hover { border-color: rgba(100,150,255,0.38); background: rgba(255,255,255,0.075); }
+    input:focus {
+      border-color: rgba(80,140,255,0.85);
+      background: rgba(20,50,140,0.22);
+      box-shadow: 0 0 0 3px rgba(70,120,255,0.18), 0 0 28px rgba(70,120,255,0.1);
     }
 
-    input::placeholder, textarea::placeholder {
-      color: rgba(150, 185, 240, 0.45);
+    .hint {
+      margin-top: -10px;
+      margin-bottom: 16px;
+      font-size: 0.75rem;
+      color: rgba(130,170,230,0.55);
+      line-height: 1.55;
     }
+    .hint a { color: rgba(100,160,255,0.85); text-decoration: underline; }
 
-    input:hover, textarea:hover {
-      border-color: rgba(120, 170, 255, 0.5);
-      background: rgba(255,255,255,0.1);
-    }
-
-    input:focus, textarea:focus {
-      border-color: rgba(100, 160, 255, 0.85);
-      background: rgba(20, 50, 130, 0.25);
-      box-shadow: 0 0 0 3px rgba(80, 130, 255, 0.2), 0 0 24px rgba(80, 130, 255, 0.15);
-    }
-
-    textarea {
-      resize: vertical;
-      min-height: 80px;
-    }
-
+    /* ── Tlačítko ── */
     button {
       width: 100%;
-      padding: 13px;
-      background: linear-gradient(135deg, #1a56e8 0%, #e63946 100%);
+      padding: 15px;
+      background: linear-gradient(135deg, #1a56e8 0%, #7c1ae8 50%, #e63946 100%);
+      background-size: 200% 200%;
       color: #fff;
       border: none;
-      border-radius: 10px;
-      font-size: 0.97rem;
-      font-weight: 700;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 800;
       font-family: inherit;
-      letter-spacing: 0.02em;
+      letter-spacing: 0.04em;
       cursor: pointer;
       position: relative;
-      transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
-      box-shadow: 0 4px 20px rgba(26, 86, 232, 0.4), 0 0 40px rgba(230, 57, 70, 0.15);
+      overflow: hidden;
+      transition: transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 6px 28px rgba(26,86,232,0.45), 0 0 60px rgba(230,57,70,0.15);
+      animation: btn-shift 6s ease infinite;
+      margin-top: 8px;
     }
-
+    @keyframes btn-shift {
+      0%,100% { background-position: 0% 50%; }
+      50%      { background-position: 100% 50%; }
+    }
     button::before {
       content: '';
       position: absolute;
       inset: 0;
-      border-radius: 10px;
-      background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+      background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, transparent 55%);
       pointer-events: none;
     }
-
     button:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 30px rgba(26, 86, 232, 0.55), 0 0 60px rgba(230, 57, 70, 0.25);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(26,86,232,0.6), 0 0 80px rgba(230,57,70,0.25);
     }
+    button:active:not(:disabled) { transform: translateY(0); }
+    button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; animation: none; }
 
-    button:active:not(:disabled) {
-      transform: translateY(0);
-    }
-
-    button:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-
+    /* ── Status ── */
     #status {
       margin-top: 16px;
-      padding: 12px 16px;
-      border-radius: 10px;
+      padding: 13px 18px;
+      border-radius: 12px;
       font-size: 0.88rem;
       display: none;
+      font-weight: 500;
     }
-
-    #status.success {
-      background: rgba(16, 185, 129, 0.12);
-      color: #6ee7b7;
-      border: 1px solid rgba(110, 231, 183, 0.25);
-    }
-
-    #status.error {
-      background: rgba(230, 57, 70, 0.1);
-      color: #fca5a5;
-      border: 1px solid rgba(252, 165, 165, 0.25);
-    }
+    #status.success { background: rgba(16,185,129,0.12); color: #6ee7b7; border: 1px solid rgba(110,231,183,0.22); }
+    #status.error   { background: rgba(230,57,70,0.1);   color: #fca5a5; border: 1px solid rgba(252,165,165,0.22); }
   </style>
 </head>
 <body>
+  <div class="bg">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+  </div>
+
   <div class="card">
-    <div class="logo">
+    <div class="logo-wrap">
       <span class="logo-text">Web Agent</span>
     </div>
-    <p class="subtitle">Odešle klientovi e-mail s odkazem na hotový web.</p>
+    <p class="subtitle">Odešle klientovi profesionální e-mail s odkazem na web.</p>
 
     <form id="sendForm">
 
-      <!-- Typ emailu -->
-      <label class="required">Typ e-mailu</label>
-      <div style="display:flex;gap:10px;margin-bottom:18px">
-        <label id="tab-done" onclick="setType('done')" style="flex:1;cursor:pointer;padding:12px;border-radius:10px;border:1.5px solid rgba(26,86,232,0.8);background:rgba(26,86,232,0.18);text-align:center;transition:all 0.2s">
-          <div style="font-size:20px;margin-bottom:4px">🚀</div>
-          <div style="color:#fff;font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em">Hotový projekt</div>
-        </label>
-        <label id="tab-demo" onclick="setType('demo')" style="flex:1;cursor:pointer;padding:12px;border-radius:10px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);text-align:center;transition:all 0.2s">
-          <div style="font-size:20px;margin-bottom:4px">👀</div>
-          <div style="color:rgba(200,225,255,0.7);font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em">Úvodní stránka</div>
-        </label>
+      <!-- Typ -->
+      <div class="section-title">Typ e-mailu</div>
+      <div class="type-switch">
+        <div id="tab-done" class="type-btn active-done" onclick="setType('done')">
+          <div class="icon">🚀</div>
+          <div class="label">Hotový projekt</div>
+        </div>
+        <div id="tab-demo" class="type-btn" onclick="setType('demo')">
+          <div class="icon">👀</div>
+          <div class="label">Úvodní stránka</div>
+        </div>
       </div>
       <input type="hidden" id="emailType" value="done" />
 
       <!-- Odesílatel -->
-      <label class="required" for="senderName">Tvoje jméno</label>
-      <input type="text" id="senderName" placeholder="Patrik" required />
+      <div class="section">
+        <div class="section-title">Odesílatel</div>
 
-      <label class="required" for="senderEmail">Tvůj Gmail</label>
-      <input type="email" id="senderEmail" placeholder="tvuj.email@gmail.com" required />
+        <label class="required" for="senderName">Tvoje jméno</label>
+        <input type="text" id="senderName" placeholder="Patrik" required />
 
-      <label class="required" for="appPassword">Gmail App Password</label>
-      <input type="password" id="appPassword" placeholder="xxxx xxxx xxxx xxxx" required />
-      <div style="margin-top:-12px;margin-bottom:18px;font-size:0.78rem;color:rgba(150,185,240,0.6);line-height:1.5">
-        Není to tvoje normální heslo.
-        <a href="https://myaccount.google.com/apppasswords" target="_blank" style="color:rgba(100,160,255,0.85);text-decoration:underline">Vygeneruj App Password zde</a>
-        — potřebuješ mít zapnuté dvoufázové ověření.
+        <label class="required" for="senderEmail">Tvůj Gmail</label>
+        <input type="email" id="senderEmail" placeholder="tvuj.email@gmail.com" required />
+
+        <label class="required" for="appPassword">Gmail App Password</label>
+        <input type="password" id="appPassword" placeholder="xxxx xxxx xxxx xxxx" required />
+        <p class="hint">
+          Není to tvoje normální heslo. &nbsp;
+          <a href="https://myaccount.google.com/apppasswords" target="_blank">Vygeneruj App Password zde</a>
+          &nbsp;— potřebuješ mít zapnuté dvoufázové ověření.
+        </p>
       </div>
 
       <!-- Klient -->
-      <label class="required" for="clientName">Jméno klienta</label>
-      <input type="text" id="clientName" placeholder="Jan Novák" required />
+      <div class="section">
+        <div class="section-title">Klient</div>
 
-      <label class="required" for="clientEmail">E-mail klienta</label>
-      <input type="email" id="clientEmail" placeholder="klient@example.com" required />
+        <label class="required" for="clientName">Jméno klienta</label>
+        <input type="text" id="clientName" placeholder="Jan Novák" required />
+
+        <label class="required" for="clientEmail">E-mail klienta</label>
+        <input type="email" id="clientEmail" placeholder="klient@example.com" required />
+      </div>
 
       <!-- Projekt -->
-      <label class="required" for="projectName">Název projektu / webu</label>
-      <input type="text" id="projectName" placeholder="Kavárna U Nováků" required />
+      <div class="section">
+        <div class="section-title">Projekt</div>
 
-      <label class="required" for="websiteUrl">URL webu</label>
-      <input type="url" id="websiteUrl" placeholder="https://novakuv-web.cz" required />
+        <label class="required" for="projectName">Název projektu / webu</label>
+        <input type="text" id="projectName" placeholder="Kavárna U Nováků" required />
 
-      <label for="note">Poznámka pro klienta (nepovinné)</label>
-      <input type="text" id="note" placeholder="Např. přihlašovací údaje do WordPressu…" />
+        <label class="required" for="websiteUrl">URL webu</label>
+        <input type="url" id="websiteUrl" placeholder="https://novakuv-web.cz" required />
 
-      <button type="submit" id="sendBtn">Odeslat e-mail</button>
+        <label for="note">Poznámka pro klienta (nepovinné)</label>
+        <input type="text" id="note" placeholder="Např. přihlašovací údaje do WordPressu…" />
+      </div>
+
+      <button type="submit" id="sendBtn">✉️ &nbsp;Odeslat e-mail</button>
     </form>
 
     <div id="status"></div>
@@ -287,21 +329,8 @@
       document.getElementById("emailType").value = t;
       const done = document.getElementById("tab-done");
       const demo = document.getElementById("tab-demo");
-      if (t === "done") {
-        done.style.border = "1.5px solid rgba(26,86,232,0.8)";
-        done.style.background = "rgba(26,86,232,0.18)";
-        done.querySelector("div:last-child").style.color = "#fff";
-        demo.style.border = "1.5px solid rgba(255,255,255,0.1)";
-        demo.style.background = "rgba(255,255,255,0.04)";
-        demo.querySelector("div:last-child").style.color = "rgba(200,225,255,0.7)";
-      } else {
-        demo.style.border = "1.5px solid rgba(124,58,237,0.8)";
-        demo.style.background = "rgba(124,58,237,0.18)";
-        demo.querySelector("div:last-child").style.color = "#fff";
-        done.style.border = "1.5px solid rgba(255,255,255,0.1)";
-        done.style.background = "rgba(255,255,255,0.04)";
-        done.querySelector("div:last-child").style.color = "rgba(200,225,255,0.7)";
-      }
+      done.className = "type-btn" + (t === "done" ? " active-done" : "");
+      demo.className = "type-btn" + (t === "demo" ? " active-demo" : "");
     }
 
     form.addEventListener("submit", async (e) => {
@@ -320,7 +349,6 @@
         projectName: document.getElementById("projectName").value.trim(),
         websiteUrl:  document.getElementById("websiteUrl").value.trim(),
         note:        document.getElementById("note").value.trim(),
-
       };
 
       try {
@@ -330,22 +358,22 @@
           body: JSON.stringify(payload),
         });
         const data = await res.json();
-
         if (res.ok) {
           statusEl.className = "success";
-          statusEl.textContent = data.message;
+          statusEl.textContent = "✅ " + data.message;
           form.reset();
+          setType("done");
         } else {
           statusEl.className = "error";
-          statusEl.textContent = data.error;
+          statusEl.textContent = "❌ " + data.error;
         }
       } catch {
         statusEl.className = "error";
-        statusEl.textContent = "Nepodařilo se spojit se serverem.";
+        statusEl.textContent = "❌ Nepodařilo se spojit se serverem.";
       } finally {
         statusEl.style.display = "block";
         btn.disabled = false;
-        btn.textContent = "Odeslat e-mail";
+        btn.innerHTML = "✉️ &nbsp;Odeslat e-mail";
       }
     });
   </script>
