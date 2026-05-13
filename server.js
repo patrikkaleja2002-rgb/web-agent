@@ -60,14 +60,25 @@ process.on("unhandledRejection", (err) => console.error("Unhandled:", err));
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
 
+// ── Health check (pro monitoring) ──
+app.get("/health", (req, res) => {
+  const ok = !!process.env.GOOGLE_CLIENT_ID && !!process.env.GOOGLE_CLIENT_SECRET;
+  res.status(ok ? 200 : 503).json({
+    status: ok ? "ok" : "error",
+    time: new Date().toISOString(),
+    oauth: ok ? "configured" : "missing env vars",
+    uptime: Math.floor(process.uptime()) + "s",
+  });
+});
+
 // ── Debug ──
 app.get("/debug", (req, res) => {
   res.json({
     hasClientId:     !!process.env.GOOGLE_CLIENT_ID,
     hasClientSecret: !!process.env.GOOGLE_CLIENT_SECRET,
-    appUrl:          process.env.APP_URL,
     callbackUrl:     CALLBACK_URL,
     isAuth:          req.isAuthenticated(),
+    uptime:          Math.floor(process.uptime()) + "s",
   });
 });
 
