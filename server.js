@@ -30,26 +30,35 @@ app.use((req, res, next) => {
 app.use(passport.initialize());
 app.use(passport.session());
 
-if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
-  console.warn("VAROVÁNÍ: GOOGLE_CLIENT_ID nebo GOOGLE_CLIENT_SECRET není nastaven!");
-} else {
-  passport.use(new GoogleStrategy({
-    clientID:     process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL:  (process.env.APP_URL || "http://localhost:3000") + "/auth/google/callback",
-  }, (accessToken, refreshToken, profile, done) => {
-    done(null, {
-      accessToken,
-      name:  profile.displayName,
-      email: profile.emails?.[0]?.value,
-      photo: profile.photos?.[0]?.value,
-    });
-  }));
-}
+const CALLBACK_URL = "https://web-agent-production-9053.up.railway.app/auth/google/callback";
+
+passport.use(new GoogleStrategy({
+  clientID:     process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL:  CALLBACK_URL,
+}, (accessToken, refreshToken, profile, done) => {
+  done(null, {
+    accessToken,
+    name:  profile.displayName,
+    email: profile.emails?.[0]?.value,
+    photo: profile.photos?.[0]?.value,
+  });
+}));
 
 // Serialize: uložíme jen to nejmenší co jde
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
+
+// ── Debug ──
+app.get("/debug", (req, res) => {
+  res.json({
+    hasClientId:     !!process.env.GOOGLE_CLIENT_ID,
+    hasClientSecret: !!process.env.GOOGLE_CLIENT_SECRET,
+    appUrl:          process.env.APP_URL,
+    callbackUrl:     CALLBACK_URL,
+    isAuth:          req.isAuthenticated(),
+  });
+});
 
 // ── Auth routes ──
 app.get("/auth/google",
