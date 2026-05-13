@@ -350,11 +350,16 @@
       };
 
       try {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 15000);
+
         const res  = await fetch("/send", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
+          signal: controller.signal,
         });
+        clearTimeout(timer);
         const data = await res.json();
         if (res.ok) {
           statusEl.className = "success";
@@ -365,9 +370,11 @@
           statusEl.className = "error";
           statusEl.textContent = "❌ " + data.error;
         }
-      } catch {
+      } catch (err) {
         statusEl.className = "error";
-        statusEl.textContent = "❌ Nepodařilo se spojit se serverem.";
+        statusEl.textContent = err.name === "AbortError"
+          ? "❌ Vypršel čas. Zkontroluj Gmail App Password a zkus znovu."
+          : "❌ Nepodařilo se spojit se serverem.";
       } finally {
         statusEl.style.display = "block";
         btn.disabled = false;

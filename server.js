@@ -121,11 +121,15 @@ app.post("/send", async (req, res) => {
     port: 587,
     secure: false,
     auth: { user: senderEmail, pass: appPassword },
+    connectionTimeout: 8000,
+    greetingTimeout: 8000,
+    socketTimeout: 8000,
   });
 
   const { html, subject } = buildEmail(type, senderName, clientName, projectName, websiteUrl, note);
 
   try {
+    await transporter.verify();
     await transporter.sendMail({
       from: `"${senderName}" <${senderEmail}>`,
       to: clientEmail,
@@ -136,7 +140,15 @@ app.post("/send", async (req, res) => {
     res.json({ success: true, message: "E-mail byl úspěšně odeslán." });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Chyba při odesílání: " + err.message });
+    let msg = "Nepodařilo se odeslat e-mail.";
+    if (err.code === "EAUTH" || err.responseCode === 535 || err.responseCode === 534) {
+      msg = "Špatný Gmail nebo App Password. Zkontroluj přihlašovací údaje a zkus znovu.";
+    } else if (err.code === "ECONNECTION" || err.code === "ETIMEDOUT") {
+      msg = "Nepodařilo se připojit k Gmailu. Zkontroluj internetové připojení.";
+    } else if (err.responseCode === 550 || err.responseCode === 553) {
+      msg = "E-mailová adresa klienta neexistuje nebo je neplatná.";
+    }
+    res.status(500).json({ error: msg });
   }
 });
 
