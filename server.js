@@ -220,8 +220,9 @@ app.post("/send", async (req, res) => {
     await gmail.users.messages.send({ userId: "me", requestBody: { raw: Buffer.from(raw).toString("base64url") } });
     res.json({ success: true, message: "E-mail byl úspěšně odeslán." });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Nepodařilo se odeslat e-mail. Zkus se odhlásit a přihlásit znovu." });
+    const msg = err?.response?.data?.error || err?.message || String(err);
+    console.error("GMAIL ERROR:", msg, JSON.stringify(err?.response?.data));
+    res.status(500).json({ error: "Chyba: " + msg });
   }
 });
 
