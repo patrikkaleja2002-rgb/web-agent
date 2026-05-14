@@ -15,12 +15,14 @@ app.use(compression());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public"), { maxAge: "1h", etag: true }));
 
+app.set("trust proxy", 1);
 app.use(cookieSession({
   name: "wa_session",
   keys: [process.env.SESSION_SECRET || "webagent-secret-xyz"],
   maxAge: 30 * 24 * 60 * 60 * 1000,
-  secure: false,
+  secure: process.env.NODE_ENV === "production",
   httpOnly: true,
+  sameSite: "lax",
 }));
 
 // Passport + cookie-session kompatibilita
