@@ -203,8 +203,6 @@
           <input type="text" id="clientName" placeholder="Jan Novák" required />
           <label class="required" for="clientEmail">E-mail klienta</label>
           <input type="email" id="clientEmail" placeholder="klient@example.com" required />
-          <label for="clientPhone">Telefon klienta (nepovinné)</label>
-          <input type="tel" id="clientPhone" placeholder="+420 123 456 789" />
         </div>
 
         <div class="section">
@@ -215,6 +213,8 @@
           <input type="url" id="websiteUrl" placeholder="https://novakuv-web.cz" required />
           <label for="note">Poznámka pro klienta (nepovinné)</label>
           <input type="text" id="note" placeholder="Např. přihlašovací údaje do WordPressu…" />
+          <label for="senderPhone">Vaše telefonní číslo (nepovinné)</label>
+          <input type="tel" id="senderPhone" placeholder="+420 123 456 789" />
         </div>
 
         <button type="submit" id="sendBtn">✉️ &nbsp;Odeslat e-mail</button>
@@ -257,7 +257,7 @@
         projectName: document.getElementById("projectName").value.trim(),
         websiteUrl:  document.getElementById("websiteUrl").value.trim(),
         note:        document.getElementById("note").value.trim(),
-        clientPhone: document.getElementById("clientPhone").value.trim(),
+        senderPhone: document.getElementById("senderPhone").value.trim(),
       };
 
       try {
