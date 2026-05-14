@@ -114,7 +114,7 @@ app.get("/auth/me", (req, res) => {
 });
 
 // ── Email builder ──
-function buildHtmlEmail(type, senderName, clientName, projectName, websiteUrl, note) {
+function buildHtmlEmail(type, senderName, clientName, projectName, websiteUrl, note, clientPhone) {
   const isDemo = type === "demo";
   const firstName = clientName.split(" ")[0];
 
@@ -211,6 +211,7 @@ function buildHtmlEmail(type, senderName, clientName, projectName, websiteUrl, n
       <!-- Footer -->
       <tr><td style="border-top:1px solid #f1f5f9;padding:24px 48px;background:#fafafa;border-radius:0 0 12px 12px">
         <p style="margin:0;color:#9ca3af;font-size:13px">Odesláno od <strong style="color:#6b7280">${senderName}</strong> — odpovězte na tento e-mail v případě dotazů.</p>
+        ${clientPhone ? `<p style="margin:8px 0 0;color:#9ca3af;font-size:13px">Tel: <strong style="color:#6b7280">${clientPhone}</strong></p>` : ""}
       </td></tr>
 
     </table>
@@ -225,7 +226,7 @@ function buildHtmlEmail(type, senderName, clientName, projectName, websiteUrl, n
 app.post("/send", async (req, res) => {
   if (!req.isAuthenticated()) return res.status(401).json({ error: "Nejsi přihlášen." });
 
-  const { type, clientName, clientEmail, projectName, websiteUrl, note } = req.body;
+  const { type, clientName, clientEmail, projectName, websiteUrl, note, clientPhone } = req.body;
   if (!clientName || !clientEmail || !projectName || !websiteUrl || !type) {
     return res.status(400).json({ error: "Vyplňte všechna povinná pole." });
   }
@@ -237,7 +238,7 @@ app.post("/send", async (req, res) => {
   auth.setCredentials({ access_token: req.user.accessToken });
 
   const gmail = google.gmail({ version: "v1", auth });
-  const { html, subject } = buildHtmlEmail(type, req.user.name, clientName, projectName, websiteUrl, note);
+  const { html, subject } = buildHtmlEmail(type, req.user.name, clientName, projectName, websiteUrl, note, clientPhone);
 
   const encodedSubject = `=?UTF-8?B?${Buffer.from(subject).toString("base64")}?=`;
   const encodedName = `=?UTF-8?B?${Buffer.from(req.user.name).toString("base64")}?=`;
