@@ -116,74 +116,105 @@ function buildHtmlEmail(type, senderName, clientName, projectName, websiteUrl, n
   const isDemo = type === "demo";
   const firstName = clientName.split(" ")[0];
 
-  const banner = isDemo
-    ? { emoji: "👀", title: "Ukázka vašeho webu", subtitle: `První náhled — ${projectName}`, bg: "linear-gradient(135deg,#0f766e 0%,#7c3aed 100%)" }
-    : { emoji: "🚀", title: "Váš web je živý!",   subtitle: projectName,                    bg: "linear-gradient(135deg,#1a56e8 0%,#7c3aed 50%,#e63946 100%)" };
+  const accentColor = isDemo ? "#2563eb" : "#111827";
+  const tagText = isDemo ? "NÁHLED WEBU" : "WEB JE SPUŠTĚN";
+  const headline = isDemo ? `Připravili jsme náhled vašeho webu` : `Váš web je připraven`;
 
   const bodyText = isDemo
-    ? `připravili jsme pro vás první ukázku webu <strong>${projectName}</strong>. Jde o úvodní verzi, která slouží k odsouhlasení designu a struktury stránky před finálním dokončením.<br><br>Prohlédněte si ji a dejte nám vědět, co byste rádi upravili nebo změnili.`
-    : `těší nás, že vám můžeme oznámit, že váš web <strong>${projectName}</strong> je hotový a plně spuštěný. Stránka je otestována, funkční a připravena přijímat návštěvníky.<br><br>Pokud budete mít jakékoliv dotazy nebo požadavky na drobné úpravy, neváhejte nás kdykoliv kontaktovat.`;
+    ? `Dobrý den, ${firstName},<br><br>připravili jsme pro vás první náhled webu <strong>${projectName}</strong>. Tato verze slouží k odsouhlasení celkového designu a struktury stránky před finálním dokončením.<br><br>Prohlédněte si ji a sdělte nám případné připomínky nebo změny.`
+    : `Dobrý den, ${firstName},<br><br>rádi vám oznamujeme, že web <strong>${projectName}</strong> je dokončen a plně spuštěn. Stránka je otestována a připravena přijímat návštěvníky.<br><br>V případě jakýchkoliv dotazů nebo požadavků na úpravy nás neváhejte kontaktovat.`;
 
-  const cta = isDemo ? "👁 &nbsp;Zobrazit ukázku" : "🌐 &nbsp;Otevřít web";
-
-  const boxes = isDemo
-    ? `<td width="48%" style="background:#f0fdfa;border:1px solid #99f6e4;border-radius:10px;padding:16px;text-align:center">
-        <div style="font-size:24px;margin-bottom:6px">💬</div>
-        <p style="margin:0;color:#134e4a;font-size:13px;font-weight:600">Zpětná vazba</p>
-        <p style="margin:4px 0 0;color:#6b7280;font-size:12px">Pošlete nám připomínky</p>
-      </td><td width="4%"></td>
-      <td width="48%" style="background:#faf5ff;border:1px solid #e9d5ff;border-radius:10px;padding:16px;text-align:center">
-        <div style="font-size:24px;margin-bottom:6px">🎨</div>
-        <p style="margin:0;color:#6b21a8;font-size:13px;font-weight:600">Návrh designu</p>
-        <p style="margin:4px 0 0;color:#6b7280;font-size:12px">K odsouhlasení</p>
-      </td>`
-    : `<td width="48%" style="background:#f8faff;border:1px solid #e0e7ff;border-radius:10px;padding:16px;text-align:center">
-        <div style="font-size:24px;margin-bottom:6px">✅</div>
-        <p style="margin:0;color:#3730a3;font-size:13px;font-weight:600">Otestováno</p>
-        <p style="margin:4px 0 0;color:#6b7280;font-size:12px">Web funguje správně</p>
-      </td><td width="4%"></td>
-      <td width="48%" style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:16px;text-align:center">
-        <div style="font-size:24px;margin-bottom:6px">📱</div>
-        <p style="margin:0;color:#166534;font-size:13px;font-weight:600">Mobilní verze</p>
-        <p style="margin:4px 0 0;color:#6b7280;font-size:12px">Funguje na všech zařízeních</p>
-      </td>`;
+  const ctaText = isDemo ? "Zobrazit náhled webu" : "Otevřít web";
 
   const noteSection = note
-    ? `<div style="margin-top:20px;padding:16px;background:#fffbeb;border-left:4px solid #f59e0b;border-radius:0 8px 8px 0">
-        <p style="margin:0;color:#92400e;font-size:14px"><strong>📝 Poznámka:</strong> ${note}</p>
-      </div>`
+    ? `<tr><td style="padding:0 48px 32px">
+        <div style="padding:16px 20px;background:#f8fafc;border-left:3px solid #2563eb;border-radius:0 6px 6px 0">
+          <p style="margin:0;color:#374151;font-size:14px;line-height:1.6"><strong style="color:#111827">Poznámka:</strong> ${note}</p>
+        </div>
+      </td></tr>`
     : "";
 
-  const subject = isDemo
-    ? `👀 Ukázka vašeho webu „${projectName}" je připravena`
-    : `🚀 Váš web „${projectName}" je hotový!`;
+  const infoRow = isDemo
+    ? `<tr><td style="padding:0 48px 40px">
+        <table width="100%" cellpadding="0" cellspacing="0">
+          <tr>
+            <td width="48%" style="padding:20px;background:#f8fafc;border-radius:8px;vertical-align:top">
+              <p style="margin:0 0 4px;color:#111827;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px">Zpětná vazba</p>
+              <p style="margin:0;color:#6b7280;font-size:13px">Odpovězte na tento e-mail s připomínkami</p>
+            </td>
+            <td width="4%"></td>
+            <td width="48%" style="padding:20px;background:#f8fafc;border-radius:8px;vertical-align:top">
+              <p style="margin:0 0 4px;color:#111827;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px">Ke schválení</p>
+              <p style="margin:0;color:#6b7280;font-size:13px">Design a struktura stránky</p>
+            </td>
+          </tr>
+        </table>
+      </td></tr>`
+    : `<tr><td style="padding:0 48px 40px">
+        <table width="100%" cellpadding="0" cellspacing="0">
+          <tr>
+            <td width="48%" style="padding:20px;background:#f8fafc;border-radius:8px;vertical-align:top">
+              <p style="margin:0 0 4px;color:#111827;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px">Otestováno</p>
+              <p style="margin:0;color:#6b7280;font-size:13px">Web funguje na všech zařízeních</p>
+            </td>
+            <td width="4%"></td>
+            <td width="48%" style="padding:20px;background:#f8fafc;border-radius:8px;vertical-align:top">
+              <p style="margin:0 0 4px;color:#111827;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px">Mobilní verze</p>
+              <p style="margin:0;color:#6b7280;font-size:13px">Plně responzivní design</p>
+            </td>
+          </tr>
+        </table>
+      </td></tr>`;
 
-  const html = `<!DOCTYPE html><html lang="cs"><head><meta charset="UTF-8"></head>
-<body style="margin:0;padding:0;background:#f3f4f6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#f3f4f6;padding:40px 16px">
-  <tr><td align="center"><table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%">
-    <tr><td style="background:${banner.bg};border-radius:16px 16px 0 0;padding:48px 40px;text-align:center">
-      <div style="font-size:52px;margin-bottom:12px">${banner.emoji}</div>
-      <h1 style="margin:0;color:#fff;font-size:28px;font-weight:800">${banner.title}</h1>
-      <p style="margin:10px 0 0;color:rgba(255,255,255,0.85);font-size:16px">${banner.subtitle}</p>
-    </td></tr>
-    <tr><td style="background:#fff;padding:40px">
-      <p style="margin:0 0 20px;color:#111827;font-size:18px;font-weight:700">Dobrý den, ${firstName} 👋</p>
-      <p style="margin:0 0 16px;color:#374151;font-size:16px;line-height:1.7">${bodyText}</p>
+  const subject = isDemo
+    ? `Náhled webu „${projectName}" je připraven`
+    : `Web „${projectName}" je spuštěn`;
+
+  const html = `<!DOCTYPE html><html lang="cs"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9;padding:48px 16px">
+  <tr><td align="center">
+    <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.08)">
+
+      <!-- Header -->
+      <tr><td style="background:#111827;padding:36px 48px;border-radius:12px 12px 0 0">
+        <p style="margin:0 0 20px;color:rgba(255,255,255,0.4);font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase">${tagText}</p>
+        <h1 style="margin:0;color:#ffffff;font-size:26px;font-weight:700;line-height:1.3">${headline}</h1>
+        <p style="margin:10px 0 0;color:rgba(255,255,255,0.55);font-size:15px">${projectName}</p>
+      </td></tr>
+
+      <!-- Divider line -->
+      <tr><td style="background:${accentColor};height:3px;padding:0"></td></tr>
+
+      <!-- Body -->
+      <tr><td style="padding:40px 48px 32px">
+        <p style="margin:0;color:#374151;font-size:15px;line-height:1.8">${bodyText}</p>
+      </td></tr>
+
+      <!-- Note -->
       ${noteSection}
-      <table cellpadding="0" cellspacing="0" style="margin:32px auto">
-        <tr><td style="background:${banner.bg};border-radius:10px">
-          <a href="${websiteUrl}" target="_blank" style="display:inline-block;padding:15px 40px;color:#fff;font-size:16px;font-weight:700;text-decoration:none">${cta}</a>
-        </td></tr>
-      </table>
-      <table width="100%" cellpadding="0" cellspacing="0"><tr>${boxes}</tr></table>
-    </td></tr>
-    <tr><td style="background:#1e293b;border-radius:0 0 16px 16px;padding:28px 40px;text-align:center">
-      <p style="margin:0 0 6px;color:rgba(255,255,255,0.9);font-size:14px;font-weight:600">Odesílatel: ${senderName}</p>
-      <p style="margin:0;color:rgba(255,255,255,0.4);font-size:12px">V případě dotazů odpovězte na tento e-mail.</p>
-    </td></tr>
-  </table></td></tr>
-</table></body></html>`;
+
+      <!-- CTA Button -->
+      <tr><td style="padding:0 48px 40px">
+        <table cellpadding="0" cellspacing="0">
+          <tr><td style="background:${accentColor};border-radius:6px">
+            <a href="${websiteUrl}" target="_blank" style="display:inline-block;padding:14px 32px;color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;letter-spacing:0.2px">${ctaText}</a>
+          </td></tr>
+        </table>
+      </td></tr>
+
+      <!-- Info boxes -->
+      ${infoRow}
+
+      <!-- Footer -->
+      <tr><td style="border-top:1px solid #f1f5f9;padding:24px 48px;background:#fafafa;border-radius:0 0 12px 12px">
+        <p style="margin:0;color:#9ca3af;font-size:13px">Odesláno od <strong style="color:#6b7280">${senderName}</strong> — odpovězte na tento e-mail v případě dotazů.</p>
+      </td></tr>
+
+    </table>
+  </td></tr>
+</table>
+</body></html>`;
 
   return { html, subject };
 }
