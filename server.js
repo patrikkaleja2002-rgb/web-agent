@@ -206,10 +206,13 @@ app.post("/send", async (req, res) => {
   const gmail = google.gmail({ version: "v1", auth });
   const { html, subject } = buildHtmlEmail(type, req.user.name, clientName, projectName, websiteUrl, note);
 
+  const encodedSubject = `=?UTF-8?B?${Buffer.from(subject).toString("base64")}?=`;
+  const encodedName = `=?UTF-8?B?${Buffer.from(req.user.name).toString("base64")}?=`;
+
   const raw = [
-    `From: "${req.user.name}" <${req.user.email}>`,
+    `From: "${encodedName}" <${req.user.email}>`,
     `To: ${clientEmail}`,
-    `Subject: ${subject}`,
+    `Subject: ${encodedSubject}`,
     "MIME-Version: 1.0",
     "Content-Type: text/html; charset=utf-8",
     "",
