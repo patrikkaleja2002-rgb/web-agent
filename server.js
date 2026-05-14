@@ -96,6 +96,11 @@ app.get("/auth/google/callback",
   (req, res) => res.redirect("/")
 );
 
+app.get("/auth/logout", (req, res) => {
+  req.session = null;
+  res.redirect("/");
+});
+
 app.get("/auth/me", (req, res) => {
   if (!req.isAuthenticated()) return res.json({ loggedIn: false });
   res.json({
